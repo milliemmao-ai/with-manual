@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>本地行渠联动作战大本营 · 使用手册</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --surface:#ffffff;
+    --ink:#1a1f36;
+    --ink-2:#4b5566;
+    --muted:#8993a8;
+    --line:#e8ecf3;
+    --brand:#4f46e5;
+    --brand-2:#7c3aed;
+    --brand-soft:#eef2ff;
+    --accent:#06b6d4;
+    --pink:#ec4899;
+    --green:#10b981;
+    --amber:#f59e0b;
+    --rose:#f43f5e;
+    --warn:#ea580c;
+    --warn-soft:#fff7ed;
+    --ok:#15803d;
+    --ok-soft:#ecfdf5;
+    --radius:16px;
+    --shadow-sm:0 1px 2px rgba(18,22,37,.04);
+    --shadow:0 2px 6px rgba(18,22,37,.04),0 12px 28px rgba(18,22,37,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    line-height:1.75;-webkit-font-smoothing:antialiased}
+  a{color:var(--brand);text-decoration:none}
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:#f1f3f9;padding:2px 7px;border-radius:5px;color:#2b3247}
+  img{max-width:100%;display:block;border-radius:10px;border:1px solid var(--line)}
+
+  /* ========== 顶部 Hero ========== */
+  .hero{
+    position:relative;overflow:hidden;color:#fff;
+    background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 45%,#06b6d4 100%);
+    padding:64px 48px 56px;
+  }
+  .hero::before{content:"";position:absolute;inset:0;opacity:.08;
+    background:radial-gradient(circle at 20% 20%,#fff 0,transparent 40%),radial-gradient(circle at 80% 60%,#fff 0,transparent 50%)}
+  .hero-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+  .hero .kicker{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:12px;letter-spacing:1.5px;margin-bottom:18px;backdrop-filter:blur(6px)}
+  .hero h1{margin:0 0 12px;font-size:42px;font-weight:800;letter-spacing:-.5px;line-height:1.2}
+  .hero .sub{margin:0;font-size:16px;opacity:.9;max-width:780px}
+  .hero-meta{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap;font-size:13px;opacity:.92}
+  .hero-meta span b{font-weight:600}
+
+  /* ========== 布局 ========== */
+  .wrap{max-width:1200px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:220px 1fr;gap:40px;position:relative}
+  nav.side{position:sticky;top:20px;align-self:start;padding:24px 0 40px;max-height:calc(100vh - 40px);overflow:auto}
+  nav.side::-webkit-scrollbar{width:4px}
+  nav.side::-webkit-scrollbar-thumb{background:#d8dde8;border-radius:2px}
+  nav.side h4{font-size:11px;letter-spacing:2px;color:var(--muted);margin:24px 0 10px;font-weight:700;text-transform:uppercase}
+  nav.side h4:first-child{margin-top:0}
+  nav.side a{display:block;padding:7px 14px;border-radius:8px;color:var(--ink-2);font-size:13.5px;margin-bottom:2px;border-left:2px solid transparent;transition:all .15s}
+  nav.side a:hover{background:var(--brand-soft);color:var(--brand)}
+  nav.side a.active{background:var(--brand-soft);color:var(--brand);border-left-color:var(--brand);font-weight:600}
+
+  main{padding:36px 0 80px;min-width:0}
+
+  section{margin-bottom:56px;scroll-margin-top:20px}
+  section>h2{font-size:28px;margin:0 0 6px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:14px}
+  section>h2 .no{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand);font-size:15px;font-weight:800}
+  section>p.lead{color:var(--ink-2);margin:0 0 24px;font-size:15px;max-width:820px}
+
+  /* 卡片基础 */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card h3{margin:0 0 12px;font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px;color:var(--ink)}
+  .card h3 i{color:var(--brand)}
+  .card p{margin:6px 0;color:var(--ink-2)}
+  .card ul{margin:10px 0;padding-left:22px;color:var(--ink-2)}
+  .card ul li{margin:6px 0}
+
+  /* 功能网格 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .feat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);transition:all .2s;position:relative;overflow:hidden}
+  .feat:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#c7d2fe}
+  .feat .ico{width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;background:var(--brand-soft);color:var(--brand)}
+  .feat h4{margin:0 0 6px;font-size:15.5px;font-weight:700}
+  .feat p{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.6}
+  .feat .tag{position:absolute;top:16px;right:16px;padding:2px 8px;font-size:10px;border-radius:4px;background:#f1f5f9;color:var(--ink-2);letter-spacing:.5px}
+
+  /* 行业色彩 */
+  .c-pink .ico{background:#fce7f3;color:#db2777}
+  .c-green .ico{background:#d1fae5;color:#059669}
+  .c-violet .ico{background:#ede9fe;color:#7c3aed}
+  .c-orange .ico{background:#ffedd5;color:#ea580c}
+  .c-indigo .ico{background:#e0e7ff;color:#4f46e5}
+  .c-amber .ico{background:#fef3c7;color:#d97706}
+  .c-blue .ico{background:#dbeafe;color:#2563eb}
+  .c-sky .ico{background:#e0f2fe;color:#0284c7}
+
+  /* 角色切换 */
+  .role-switch{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:4px;background:#f1f5f9;border-radius:12px;width:fit-content}
+  .role-switch button{padding:9px 18px;border:none;background:transparent;border-radius:9px;cursor:pointer;font-size:13.5px;color:var(--ink-2);font-weight:500;transition:all .15s}
+  .role-switch button.active{background:var(--surface);color:var(--brand);box-shadow:0 1px 3px rgba(0,0,0,.1);font-weight:600}
+  .role-panel{display:none;animation:fadeIn .25s ease}
+  .role-panel.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* 权限矩阵 */
+  table.matrix{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);font-size:14px}
+  table.matrix th,table.matrix td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line)}
+  table.matrix th{background:#f8fafc;font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.3px}
+  table.matrix tr:last-child td{border-bottom:none}
+  table.matrix tr:hover{background:#fafbff}
+  table.matrix td.center,table.matrix th.center{text-align:center}
+  .yes{color:var(--ok);font-weight:700}
+  .no{color:#b8bfd1}
+  .half{color:var(--warn);font-weight:700}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+  .pill.g{background:var(--ok-soft);color:var(--ok)}
+  .pill.a{background:#fff7ed;color:var(--warn)}
+  .pill.b{background:var(--brand-soft);color:var(--brand)}
+  .pill.gray{background:#f1f5f9;color:var(--ink-2)}
+
+  /* 步骤 */
+  .steps{display:grid;gap:14px}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 24px;display:grid;grid-template-columns:44px 1fr;gap:18px;align-items:start;box-shadow:var(--shadow-sm)}
+  .step .n{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;box-shadow:0 2px 6px rgba(79,70,229,.3)}
+  .step h4{margin:0 0 6px;font-size:15.5px;font-weight:700}
+  .step p{margin:0;color:var(--ink-2);font-size:14px}
+  .step .tip{margin-top:10px;padding:10px 14px;background:#f0f9ff;border-left:3px solid var(--accent);border-radius:8px;font-size:13px;color:#0c4a6e}
+  .step .tip i{color:var(--accent)}
+
+  /* 提示框 */
+  .note{padding:14px 18px;border-radius:10px;margin:12px 0;font-size:14px;border:1px solid;display:flex;gap:12px;align-items:flex-start}
+  .note i{font-size:18px;flex-shrink:0;margin-top:1px}
+  .note.info{background:var(--brand-soft);border-color:#c7d2fe;color:#3730a3}
+  .note.info i{color:var(--brand)}
+  .note.warn{background:var(--warn-soft);border-color:#fed7aa;color:#7c2d12}
+  .note.warn i{color:var(--warn)}
+  .note.ok{background:var(--ok-soft);border-color:#bbf7d0;color:#14532d}
+  .note.ok i{color:var(--ok)}
+  .note b{font-weight:700}
+
+  /* FAQ */
+  .faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;box-shadow:var(--shadow-sm);overflow:hidden;transition:all .2s}
+  .faq details[open]{border-color:#c7d2fe;box-shadow:var(--shadow)}
+  .faq summary{padding:16px 20px;cursor:pointer;font-weight:600;font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:12px;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .q{width:26px;height:26px;border-radius:7px;background:var(--brand-soft);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .faq summary::after{content:"\2b";margin-left:auto;font-size:22px;color:var(--muted);font-weight:300;transition:transform .2s}
+  .faq details[open] summary::after{transform:rotate(45deg)}
+  .faq .answer{padding:0 20px 20px 58px;color:var(--ink-2);font-size:14px}
+  .faq .answer ul{margin:8px 0;padding-left:22px}
+  .faq .answer ul li{margin:5px 0}
+
+  /* 数据格式代码块 */
+  .schema{background:#0f172a;color:#e2e8f0;border-radius:var(--radius);padding:22px 26px;font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:13px;line-height:1.85;overflow-x:auto;box-shadow:var(--shadow)}
+  .schema .c{color:#64748b}
+  .schema .k{color:#7dd3fc}
+  .schema .v{color:#fde68a}
+
+  /* 列表卡 两栏 */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:900px){.two-col{grid-template-columns:1fr}}
+
+  /* 截图标注 */
+  figure{margin:16px 0;position:relative}
+  figure img{box-shadow:var(--shadow);cursor:zoom-in;transition:all .25s ease;border-radius:10px;filter:blur(2.5px)}
+  figure img:hover{transform:scale(1.005);box-shadow:0 8px 32px rgba(18,22,37,.12)}
+  figure::before{content:"🔒 示意图 · 部分数据已脱敏";position:absolute;top:10px;left:10px;z-index:2;padding:4px 10px;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:6px;font-size:11px;color:var(--ink-2);font-weight:600;pointer-events:none}
+  figcaption{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+
+  /* 灯箱 */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:none;align-items:center;justify-content:center;padding:40px;cursor:zoom-out;backdrop-filter:blur(4px)}
+  .lightbox.open{display:flex;animation:lbIn .2s ease}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .lightbox .lb-close{position:absolute;top:20px;right:28px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:1px solid rgba(255,255,255,.2);transition:all .15s}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.2)}
+  .lightbox .lb-cap{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.85);font-size:13px;padding:8px 16px;background:rgba(0,0,0,.4);border-radius:8px;backdrop-filter:blur(8px)}
+  @keyframes lbIn{from{opacity:0}to{opacity:1}}
+
+  /* AI 助手特殊样式 */
+  .ai-card{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#06b6d4 100%);color:#fff;border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden}
+  .ai-card::before{content:"";position:absolute;right:-50px;top:-50px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.15),transparent 70%)}
+  .ai-card h3{color:#fff;margin:0 0 10px;font-size:20px;font-weight:800;display:flex;align-items:center;gap:10px}
+  .ai-card p{color:rgba(255,255,255,.92);margin:6px 0}
+  .ai-card .chip{display:inline-block;padding:4px 12px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:12px;margin-right:6px;margin-top:8px;backdrop-filter:blur(4px)}
+  .ai-entry{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+  .ai-entry .idx{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+  .ai-entry h5{margin:0 0 4px;font-size:14.5px;font-weight:700}
+  .ai-entry p{margin:0;font-size:13px;color:var(--ink-2)}
+
+  /* 底部 */
+  footer{max-width:1200px;margin:0 auto;padding:36px 48px 56px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);margin-top:40px}
+  footer .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  /* 响应式 */
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr;padding:0 20px;gap:20px}
+    nav.side{position:static;max-height:none;padding:16px 0}
+    .hero{padding:44px 24px}
+    .hero h1{font-size:30px}
+    footer{padding:24px 20px}
+    section>h2{font-size:22px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="kicker"><i class="ri-rocket-2-line"></i>&nbsp;PRODUCT MANUAL · v1.0</span>
+    <h1>本地行渠联动作战大本营 · 使用手册</h1>
+    <p class="sub">面向渠道代理与省区赋能同学的一站式行业作战平台，整合大盘数据分析、案例沉淀、知识检索、智能拓客方案与行业动态追踪，并内置「本地小助手」AI 咨询能力。</p>
+    <div class="hero-meta">
+      <span><i class="ri-calendar-line"></i>&nbsp;编写日期：<b>2026-04-22</b></span>
+      <span><i class="ri-price-tag-3-line"></i>&nbsp;对应版本：<b>v171</b></span>
+      <span><i class="ri-team-line"></i>&nbsp;适用角色：<b>普通用户 / 编辑权限 / 超级管理员</b></span>
+      <span><i class="ri-links-line"></i>&nbsp;访问入口：<a href="https://local-industry-intelligence-60hmb6hv.app.with.woa.com" style="color:#fff;text-decoration:underline" target="_blank">local-industry-intelligence-60hmb6hv.app.with.woa.com</a></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 侧边导航 -->
+  <nav class="side">
+    <h4>入门</h4>
+    <a href="#overview" class="active">一、系统概览</a>
+    <a href="#roles">二、权限与角色</a>
+    <h4>功能模块</h4>
+    <a href="#m-dashboard">① 大盘数据</a>
+    <a href="#m-cases">② 案例库</a>
+    <a href="#m-knowledge">③ 知识库</a>
+    <a href="#m-plan">④ 拓客方案</a>
+    <a href="#m-news">⑤ 重要动态</a>
+    <a href="#m-admin">⑥ 管理后台</a>
+    <h4>AI 能力</h4>
+    <a href="#ai-assistant">🤖 本地小助手</a>
+    <h4>数据操作</h4>
+    <a href="#upload">上传 SOP</a>
+    <a href="#schema">数据格式规范</a>
+    <a href="#download">下载与安全</a>
+    <h4>支持</h4>
+    <a href="#faq">常见问题</a>
+    <a href="#changelog">更新日志</a>
+  </nav>
+
+  <main>
+
+    <!-- ========== 1. 系统概览 ========== -->
+    <section id="overview">
+      <h2><span class="no">1</span>系统概览</h2>
+      <p class="lead">本系统围绕 <b>8 大行业赛道</b>组织所有功能，以数据、知识、方法论三层结构支撑渠道代理的日常作战。顶部 6 个主 Tab 串起全部能力，左上角是"本地行渠联动作战大本营"品牌标识，右上角是当前用户信息与角色标签。</p>
+
+      <figure>
+        <img src="manual_assets_public/20_home.png" alt="首页大盘数据界面">
+        <figcaption>首页 · 大盘数据模块（丽人赛道 · 月度数据速递）</figcaption>
+      </figure>
+
+      <h3 style="margin:28px 0 14px;font-size:18px;font-weight:700">六大主功能模块</h3>
+      <div class="grid">
+        <div class="feat c-blue">
+          <div class="ico"><i class="ri-dashboard-3-line"></i></div>
+          <h4>① 大盘数据</h4>
+          <p>按行业赛道展示基准线 KPI、流量占比、优化目标、品类消耗、落地页组合效果。</p>
+          <span class="tag">核心</span>
+        </div>
+        <div class="feat c-indigo">
+          <div class="ico"><i class="ri-folder-chart-line"></i></div>
+          <h4>② 案例库</h4>
+          <p>优秀投放/运营案例沉淀，多维搜索、行业筛选、详情弹窗查看与新增。</p>
+          <span class="tag">沉淀</span>
+        </div>
+        <div class="feat c-violet">
+          <div class="ico"><i class="ri-book-open-line"></i></div>
+          <h4>③ 知识库</h4>
+          <p>10 大文档类型：百宝箱、风控规则、创意指南、大盘数据、投放指南等。</p>
+          <span class="tag">AI 加持</span>
+        </div>
+        <div class="feat c-pink">
+          <div class="ico"><i class="ri-magic-line"></i></div>
+          <h4>④ 拓客方案</h4>
+          <p>配置赛道/品类/预算 → 实时生成提示词 → 一键打开 AI 助手出方案。</p>
+          <span class="tag">提效</span>
+        </div>
+        <div class="feat c-orange">
+          <div class="ico"><i class="ri-newspaper-line"></i></div>
+          <h4>⑤ 重要动态</h4>
+          <p>团队公告、行业资讯聚合；支持发布、编辑、转发到剪贴板。</p>
+          <span class="tag">情报</span>
+        </div>
+        <div class="feat c-amber">
+          <div class="ico"><i class="ri-settings-4-line"></i></div>
+          <h4>⑥ 管理后台</h4>
+          <p>6 个子模块：行业品类、赛道展示、行业负责人、权限、访问统计、反馈。</p>
+          <span class="tag">管理员</span>
+        </div>
+      </div>
+
+      <h3 style="margin:32px 0 14px;font-size:18px;font-weight:700">支持的 8 大行业赛道</h3>
+      <div class="grid">
+        <div class="feat c-pink"><div class="ico"><i class="ri-scissors-line"></i></div><h4>丽人</h4><p>美容、美发、美甲、医美等相关品类</p></div>
+        <div class="feat c-green"><div class="ico"><i class="ri-flight-takeoff-line"></i></div><h4>旅游</h4><p>跟团游、自由行、景区门票等</p></div>
+        <div class="feat c-violet"><div class="ico"><i class="ri-store-3-line"></i></div><h4>加盟</h4><p>招商加盟全品类</p></div>
+        <div class="feat c-orange"><div class="ico"><i class="ri-home-heart-line"></i></div><h4>综合家政（综服）</h4><p>家政、保洁、维修等</p></div>
+        <div class="feat c-indigo"><div class="ico"><i class="ri-briefcase-line"></i></div><h4>商服</h4><p>企业服务类</p></div>
+        <div class="feat c-amber"><div class="ico"><i class="ri-restaurant-line"></i></div><h4>餐娱</h4><p>餐饮、娱乐</p></div>
+        <div class="feat c-blue"><div class="ico"><i class="ri-store-2-line"></i></div><h4>零售</h4><p>线下零售业态</p></div>
+        <div class="feat c-sky"><div class="ico"><i class="ri-government-line"></i></div><h4>政务</h4><p>政府类投放</p></div>
+      </div>
+
+      <div class="note info" style="margin-top:24px">
+        <i class="ri-information-line"></i>
+        <div><b>赛道体系是动态的。</b>管理员可以在「管理后台 → 行业品类管理」中新增/隐藏赛道，前端刷新即同步。图标与主色若无预设会自动分配。</div>
+      </div>
+    </section>
+
+    <!-- ========== 2. 权限与角色 ========== -->
+    <section id="roles">
+      <h2><span class="no">2</span>权限与角色</h2>
+      <p class="lead">系统采用三层权限模型：超级管理员 / 编辑权限用户 / 普通用户。编辑权限细分到「模块 × 赛道」二维粒度，<b>任一模块有编辑权限即可看到管理后台入口</b>。</p>
+
+      <div class="role-switch" role="tablist">
+        <button class="active" data-role="normal">普通用户</button>
+        <button data-role="editor">编辑权限用户</button>
+        <button data-role="admin">超级管理员</button>
+      </div>
+
+      <div class="role-panel active" data-role="normal">
+        <div class="card">
+          <h3><i class="ri-user-line"></i>普通用户 · 只读使用者</h3>
+          <ul>
+            <li>可浏览所有模块：大盘数据、案例库、知识库、拓客方案、重要动态</li>
+            <li>可搜索、筛选、查看详情、使用"本地小助手"AI 咨询</li>
+            <li>可下载大盘数据（带安全提示确认）</li>
+            <li>可生成拓客方案提示词并跳转助手</li>
+            <li><b>不可</b>上传数据、新增案例/知识/动态，<b>不可见</b>管理后台入口</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-panel" data-role="editor">
+        <div class="card">
+          <h3><i class="ri-edit-box-line"></i>编辑权限用户 · 模块×赛道维度授权</h3>
+          <ul>
+            <li>拥有普通用户全部权限</li>
+            <li>在被授权的「模块 × 赛道」组合下，可<b>上传数据、编辑字段、新增/删除内容</b></li>
+            <li>例：仅授权"大盘数据 × 丽人"，则只能给丽人赛道上传 Excel，其他赛道只读</li>
+            <li>拥有任一模块编辑权限，即可看到管理后台入口（但仅能操作自己有权的内容）</li>
+          </ul>
+          <div class="note info" style="margin-top:10px">
+            <i class="ri-shield-keyhole-line"></i>
+            <div>大盘数据的"数据周期"编辑按钮、案例库"新增案例"按钮等，都会依据 <code>canEditModule()</code> 与 <code>canEditTrack()</code> 动态显隐。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="role-panel" data-role="admin">
+        <div class="card">
+          <h3><i class="ri-shield-star-line"></i>超级管理员 · 全权</h3>
+          <ul>
+            <li>拥有所有模块、所有赛道的完整读写权限</li>
+            <li>独享「管理后台」完整 6 个子模块的配置权（含权限分发、行业品类增删、访问统计查看等）</li>
+            <li>可添加/撤销其他人的超级管理员身份、可冻结账号</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 14px;font-size:18px;font-weight:700">权限矩阵速查</h3>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>能力</th>
+            <th class="center">普通用户</th>
+            <th class="center">编辑权限用户</th>
+            <th class="center">超级管理员</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>浏览 / 搜索 / 筛选</td><td class="center yes">✓</td><td class="center yes">✓</td><td class="center yes">✓</td></tr>
+          <tr><td>使用本地小助手 AI 咨询</td><td class="center yes">✓</td><td class="center yes">✓</td><td class="center yes">✓</td></tr>
+          <tr><td>下载大盘数据</td><td class="center yes">✓</td><td class="center yes">✓</td><td class="center yes">✓</td></tr>
+          <tr><td>生成拓客方案提示词</td><td class="center yes">✓</td><td class="center yes">✓</td><td class="center yes">✓</td></tr>
+          <tr><td>上传大盘数据（Excel）</td><td class="center no">—</td><td class="center half">按授权赛道</td><td class="center yes">✓</td></tr>
+          <tr><td>新增案例 / 知识 / 动态</td><td class="center no">—</td><td class="center half">按授权模块</td><td class="center yes">✓</td></tr>
+          <tr><td>编辑大盘数据周期</td><td class="center no">—</td><td class="center half">按授权赛道</td><td class="center yes">✓</td></tr>
+          <tr><td>查看管理后台</td><td class="center no">—</td><td class="center half">任一编辑权限即可</td><td class="center yes">✓</td></tr>
+          <tr><td>行业品类增删 / 权限分发</td><td class="center no">—</td><td class="center no">—</td><td class="center yes">✓</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ========== 3. 大盘数据 ========== -->
+    <section id="m-dashboard">
+      <h2><span class="no">①</span>大盘数据</h2>
+      <p class="lead">按赛道展示行业基准线与细分维度数据。进入模块默认选中第一个赛道，顶部行业切换栏可切换到其他赛道；每个赛道都有<b>独立的数据周期</b>（如丽人 2026-02-01 ~ 2026-02-28），互不影响。</p>
+
+      <div class="card">
+        <h3><i class="ri-layout-5-line"></i>赛道页面布局（以丽人为例）</h3>
+        <p>每个赛道页面统一由以下 6 个区块组成，顶部有目录锚点可快速跳转：</p>
+        <table class="matrix">
+          <thead><tr><th style="width:160px">区块</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pill b">行业基准线</span></td><td>4 个 KPI 卡：下单 OG 平均转化成本、企微 OG 平均转化成本、最大消耗渠道、最优 CVR 渠道</td></tr>
+            <tr><td><span class="pill b">动态数据</span></td><td>根据上传的 Excel 自动渲染的图表与表格（可选区域，未上传则隐藏）</td></tr>
+            <tr><td><span class="pill b">流量占比及效果</span></td><td>二级流量维度的消耗占比、ECPM、CTR、综合 CVR、转化成本</td></tr>
+            <tr><td><span class="pill b">分流量优化目标</span></td><td>各流量按优化目标排序的效果对比</td></tr>
+            <tr><td><span class="pill b">品类消耗占比</span></td><td>按品类拆分的投放链路、优化目标、加粉成本/表单成本、下单成本</td></tr>
+            <tr><td><span class="pill b">流量 × 链路 × 落地页</span></td><td>三维筛选（OG类型 / 流量版位 / 落地页类型 / 落地页组件）交叉查询大表</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3><i class="ri-tools-line"></i>页面可用操作</h3>
+        <div class="two-col">
+          <div>
+            <p><b>所有用户可用：</b></p>
+            <ul>
+              <li>切换赛道、展开/收起数据模块目录</li>
+              <li>查看完整表格、排序与搜索（品类支持列内搜索）</li>
+              <li>下载数据：单模块下载 / 整体下载（Excel / CSV / PDF 三选一）</li>
+            </ul>
+          </div>
+          <div>
+            <p><b>有该赛道编辑权限：</b></p>
+            <ul>
+              <li>上传数据：顶部「上传数据」按钮（紫蓝渐变）</li>
+              <li>编辑数据周期：日期标签旁出现编辑按钮，支持"近双周/上月/上季度/近半年/今年"快捷选择</li>
+              <li>单元格就地编辑（ECPM/CTR/CVR/成本等数值字段）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="note warn">
+        <i class="ri-alarm-warning-line"></i>
+        <div><b>下载前会弹出信息安全提示。</b>数据仅供内部业务参考使用，<b>严禁对外传播</b>；确认后才会实际下载。</div>
+      </div>
+    </section>
+
+    <!-- ========== 4. 案例库 ========== -->
+    <section id="m-cases">
+      <h2><span class="no">②</span>案例库</h2>
+      <p class="lead">沉淀各行业的优秀投放/运营案例，支持按行业快速筛选与关键词搜索，点击卡片进入详情弹窗查看完整描述。</p>
+
+      <figure>
+        <img src="manual_assets_public/21_cases.png" alt="案例库界面">
+        <figcaption>案例库 · 多行业筛选 + 搜索 + 卡片网格</figcaption>
+      </figure>
+
+      <div class="card">
+        <h3><i class="ri-search-line"></i>核心功能</h3>
+        <ul>
+          <li><b>行业筛选</b>：顶部 8 个行业快速过滤按钮 + 全部</li>
+          <li><b>关键词搜索</b>：支持标题、描述、投放链路等字段模糊匹配</li>
+          <li><b>详情查看</b>：卡片点击 → 弹窗显示完整案例（投放链路、优化目标、效果数据、截图等）</li>
+          <li><b>案例统计</b>：页面顶部实时显示"当前展示 X 条 / 共 Y 条"</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3><i class="ri-add-line"></i>新增案例（需编辑权限）</h3>
+        <p>点击右上角「<b>新增案例</b>」按钮，打开新增表单：</p>
+        <ul>
+          <li>选择所属行业 / 品类（管理员在后台配置）</li>
+          <li>填写案例标题、投放链路、优化目标、效果描述</li>
+          <li>上传截图附件（jpg/png）</li>
+          <li>支持 <b>Excel 批量导入</b>（下载模板后填充上传）</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 5. 知识库 ========== -->
+    <section id="m-knowledge">
+      <h2><span class="no">③</span>知识库</h2>
+      <p class="lead">集中管理 10 大类投放相关文档，并在顶部内嵌"咨询本地小助手"入口——AI 直接读知识库回答问题。</p>
+
+      <figure>
+        <img src="manual_assets_public/22_knowledge.png" alt="知识库界面">
+        <figcaption>知识库 · AI 助手大卡片 + 左侧分类树 + 右侧文档列表</figcaption>
+      </figure>
+
+      <div class="card">
+        <h3><i class="ri-folder-3-line"></i>10 大知识类型</h3>
+        <div class="grid">
+          <div class="feat c-blue"><div class="ico"><i class="ri-treasure-map-line"></i></div><h4>百宝箱</h4><p>综合类经验沉淀</p></div>
+          <div class="feat c-rose"><div class="ico"><i class="ri-shield-check-line"></i></div><h4>风控审核规则</h4><p>审核红线与合规要点</p></div>
+          <div class="feat c-pink"><div class="ico"><i class="ri-palette-line"></i></div><h4>创意指南</h4><p>素材、脚本、文案规范</p></div>
+          <div class="feat c-indigo"><div class="ico"><i class="ri-bar-chart-2-line"></i></div><h4>大盘数据</h4><p>行业数据解读文档</p></div>
+          <div class="feat c-green"><div class="ico"><i class="ri-rocket-2-line"></i></div><h4>投放指南</h4><p>投放操作手册</p></div>
+          <div class="feat c-violet"><div class="ico"><i class="ri-robot-line"></i></div><h4>智投手册</h4><p>自动投放策略</p></div>
+          <div class="feat c-amber"><div class="ico"><i class="ri-route-line"></i></div><h4>链路投放指引</h4><p>不同转化链路玩法</p></div>
+          <div class="feat c-sky"><div class="ico"><i class="ri-stethoscope-line"></i></div><h4>诊断指南</h4><p>问题诊断与优化</p></div>
+          <div class="feat c-orange"><div class="ico"><i class="ri-user-add-line"></i></div><h4>拓客拓品</h4><p>拓客与品类拓展方法</p></div>
+          <div class="feat c-blue"><div class="ico"><i class="ri-more-line"></i></div><h4>其他</h4><p>暂未分类的文档</p></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i class="ri-upload-cloud-line"></i>添加知识（需编辑权限）</h3>
+        <ul>
+          <li>点击右上角「<b>添加知识</b>」按钮</li>
+          <li>支持 <b>任意格式</b>文件上传：Excel（xlsx/xls）、CSV、PDF、图片（jpg/png/gif/webp）、Word 等</li>
+          <li>也支持 <b>链接导入</b>：粘贴 iWiki 或其他内部链接，系统自动抓取标题与摘要</li>
+          <li>填写标题、选择知识类型 / 所属行业 / 子行业标签</li>
+          <li>上传时自动检测重名，重复文档会弹窗提示是否覆盖</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 6. 拓客方案 ========== -->
+    <section id="m-plan">
+      <h2><span class="no">④</span>拓客方案</h2>
+      <p class="lead">左右分屏工作流：左边填业务配置，右边实时生成结构化提示词；确认后一键复制并自动打开"本地小助手"跑方案。</p>
+
+      <figure>
+        <img src="manual_assets_public/23_plan.png" alt="拓客方案生成器界面">
+        <figcaption>拓客方案 · 左配置 + 右提示词预览 + 一键生成</figcaption>
+      </figure>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <div>
+            <h4>填写方案配置（左侧）</h4>
+            <p>选择赛道 → 品类 → 目标（加粉/表单/下单/加企微等）→ 覆盖范围 → 目标客群 → 预算区间 → 竞品预算参考。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <div>
+            <h4>检查提示词预览（右侧）</h4>
+            <p>提示词随配置实时更新，顶部显示字数统计；你可以直接在文本框里手动微调，也可以点「仅复制」只拿提示词自己用。</p>
+            <div class="tip"><i class="ri-lightbulb-line"></i>&nbsp;提示词已结构化：业务背景 / 目标 / 预算约束 / 风险提示 / 输出格式要求，基本不需要再调整。</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <div>
+            <h4>一键生成方案</h4>
+            <p>点击底部紫蓝色大按钮「<b>生成方案（复制提示词并打开智能助手）</b>」——系统自动把提示词写入剪贴板，并从右侧弹出本地小助手面板，粘贴即问。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note ok">
+        <i class="ri-check-double-line"></i>
+        <div>方案输出通常包含：<b>执行计划（阶段 + 动作）、预算分配建议、风险分析、建议竞品预算</b> 等结构化内容，可以直接复制到周会纪要或客户汇报里。</div>
+      </div>
+    </section>
+
+    <!-- ========== 7. 重要动态 ========== -->
+    <section id="m-news">
+      <h2><span class="no">⑤</span>重要动态</h2>
+      <p class="lead">团队公告 + 精选行业资讯。列表按时间倒序，支持发布、编辑、转发到剪贴板直接贴到群里。</p>
+
+      <figure>
+        <img src="manual_assets_public/24_news.png" alt="重要动态界面">
+        <figcaption>重要动态 · 公告栏 + 资讯列表</figcaption>
+      </figure>
+
+      <div class="card">
+        <h3><i class="ri-megaphone-line"></i>核心功能</h3>
+        <ul>
+          <li><b>通知公告栏</b>：最新重要动态顶置展示（带橙色标签）</li>
+          <li><b>动态列表</b>：分卡片展示标题、来源、时间、摘要</li>
+          <li><b>转发</b>：每条动态支持一键复制富文本到剪贴板，直接粘贴到企微群</li>
+          <li><b>添加动态</b>（需编辑权限）：点击右上角「添加动态」，填入标题 / 来源 / 链接 / 摘要 / 是否置顶</li>
+          <li><b>编辑 / 删除</b>：自己发布或有编辑权限的动态可二次修改</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 8. 管理后台 ========== -->
+    <section id="m-admin">
+      <h2><span class="no">⑥</span>管理后台</h2>
+      <p class="lead">只对有任一编辑权限的用户可见，拥有 6 个子 Tab 分别管控不同维度的系统配置。</p>
+
+      <figure>
+        <img src="manual_assets_public/25_admin.png" alt="管理后台界面">
+        <figcaption>管理后台 · 6 个子模块 Tab 切换</figcaption>
+      </figure>
+
+      <table class="matrix">
+        <thead><tr><th style="width:200px">子模块</th><th>能做什么</th><th class="center" style="width:120px">操作权限</th></tr></thead>
+        <tbody>
+          <tr><td><i class="ri-building-2-line"></i>&nbsp;<b>行业品类管理</b></td><td>新增 / 删除 / 重命名行业赛道；维护每个行业下的品类与二级行业清单</td><td class="center"><span class="pill a">超管</span></td></tr>
+          <tr><td><i class="ri-list-settings-line"></i>&nbsp;<b>赛道展示管理</b></td><td>控制大盘数据模块中赛道的展示顺序、默认选中、是否隐藏</td><td class="center"><span class="pill a">超管</span></td></tr>
+          <tr><td><i class="ri-user-star-line"></i>&nbsp;<b>行业负责人</b></td><td>配置每个行业的业务负责人（用于页面联系人展示、@ 通知）</td><td class="center"><span class="pill a">超管</span></td></tr>
+          <tr><td><i class="ri-shield-user-line"></i>&nbsp;<b>权限管理</b></td><td>配置「用户 × 模块 × 赛道」三维授权；添加/撤销超级管理员</td><td class="center"><span class="pill a">超管</span></td></tr>
+          <tr><td><i class="ri-bar-chart-box-line"></i>&nbsp;<b>访问统计</b></td><td>查看 PV / UV / 按模块 / 按用户的访问排行与趋势</td><td class="center"><span class="pill b">编辑+</span></td></tr>
+          <tr><td><i class="ri-chat-poll-line"></i>&nbsp;<b>反馈管理</b></td><td>查看用户提交的问题反馈，标记处理状态与回复</td><td class="center"><span class="pill b">编辑+</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ========== 9. AI 助手 ========== -->
+    <section id="ai-assistant">
+      <h2><span class="no">🤖</span>本地小助手 · AI 咨询入口</h2>
+      <p class="lead">基于内部 Knot 平台搭建，绑定了知识库向量索引——你问的任何问题它都会先读你上传的文档、案例、大盘数据，再回答。是整个系统最核心的"大脑"。</p>
+
+      <div class="ai-card">
+        <h3><i class="ri-robot-2-line"></i>咨询本地小助手</h3>
+        <p>智能问答 · 策略建议 · 数据解读 · 拓客方案生成</p>
+        <p style="margin-top:12px;font-size:13px;opacity:.85">底层 URL：<code style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.25)">knot.woa.com/chat?web_key=07fb5996...&iframe=1&hidenav=1</code></p>
+        <div>
+          <span class="chip"><i class="ri-chat-3-line"></i>&nbsp;智能问答</span>
+          <span class="chip"><i class="ri-lightbulb-line"></i>&nbsp;策略建议</span>
+          <span class="chip"><i class="ri-bar-chart-2-line"></i>&nbsp;数据解读</span>
+          <span class="chip"><i class="ri-rocket-2-line"></i>&nbsp;方案生成</span>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 12px;font-size:17px;font-weight:700">四个调起入口</h3>
+      <div class="ai-entry">
+        <div class="idx">1</div>
+        <div>
+          <h5>知识库顶部大卡片（主入口）</h5>
+          <p>进入「知识库」Tab，紫色渐变大卡片「咨询本地小助手」是主要入口，点击任意位置或"立即咨询"按钮即可展开右侧抽屉式对话面板。</p>
+        </div>
+      </div>
+      <div class="ai-entry">
+        <div class="idx">2</div>
+        <div>
+          <h5>右下角悬浮按钮（全局）</h5>
+          <p>所有 Tab 都可见的"咨询"悬浮按钮，让你随时随地发问——不用先跳到知识库。</p>
+        </div>
+      </div>
+      <div class="ai-entry">
+        <div class="idx">3</div>
+        <div>
+          <h5>拓客方案「生成方案」按钮（自动化链路）</h5>
+          <p>在拓客方案 Tab 配置完条件后，点击底部大按钮——系统会<b>自动把提示词复制到剪贴板</b>并从右侧弹出 AI 面板，你只要在对话框里粘贴（Cmd+V）按回车即可。</p>
+        </div>
+      </div>
+      <div class="ai-entry">
+        <div class="idx">4</div>
+        <div>
+          <h5>拓客方案「智能助手」引导框</h5>
+          <p>结果页顶部有一个"需要更精准的行业数据？"提示框，里面的按钮同样会打开 AI 面板，方便对生成的方案继续追问。</p>
+        </div>
+      </div>
+
+      <h3 style="margin:28px 0 12px;font-size:17px;font-weight:700">使用建议与技巧</h3>
+      <div class="two-col">
+        <div class="card">
+          <h3 style="font-size:15px"><i class="ri-question-answer-line"></i>善用「先上传后问」</h3>
+          <p>助手的回答质量取决于知识库覆盖度。<b>先把行业指南、案例、大盘数据上传齐</b>，再来问效果最好——否则只能靠模型通用知识兜底。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px"><i class="ri-file-copy-line"></i>让它结构化输出</h3>
+          <p>提问时加一句 <code>用表格输出</code> 或 <code>按 1/2/3 列点</code>，返回的内容更容易直接用到周报、客户汇报里。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px"><i class="ri-shuffle-line"></i>多轮追问</h3>
+          <p>面板保留上下文，可以这样跟进：先问 <i>"丽人行业最优链路是什么？"</i> → 再问 <i>"那加粉成本给我一个基准"</i> → 最后 <i>"帮我写一份华东区的拓客方案"</i>。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px"><i class="ri-speed-up-line"></i>关闭 / 重开保留记忆</h3>
+          <p>点右上角 × 关闭抽屉不会清空会话；再次打开延续上下文。如果想重新开始一段，直接在助手里说「清空」或新建对话。</p>
+        </div>
+      </div>
+
+      <div class="note warn" style="margin-top:18px">
+        <i class="ri-error-warning-line"></i>
+        <div><b>AI 不能替代数据验证。</b>对于关键业务决策（预算、报价、合规判断），请以大盘数据 + 知识库原文为准，AI 输出建议作为参考起点。</div>
+      </div>
+    </section>
+
+    <!-- ========== 10. 上传 SOP ========== -->
+    <section id="upload">
+      <h2><span class="no">📥</span>上传数据 SOP</h2>
+      <p class="lead">以大盘数据上传为例（支持任意格式智能识别），其他模块上传流程基本一致。</p>
+
+      <div class="steps">
+        <div class="step"><div class="n">1</div><div><h4>进入目标赛道</h4><p>在大盘数据 Tab 顶部，点击你有编辑权限的赛道。</p></div></div>
+        <div class="step"><div class="n">2</div><div><h4>点击「上传数据」按钮</h4><p>右上角紫蓝渐变按钮（无权限时不显示）。</p></div></div>
+        <div class="step"><div class="n">3</div><div><h4>选择文件</h4><p>拖拽或点击上传区；支持 <b>Excel（xlsx/xls）/ CSV / 图片 / PDF</b>。</p><div class="tip"><i class="ri-sparkling-2-line"></i>&nbsp;系统使用"智能上传"接口 <code>/api/dashboard/smart-update</code>——自动识别字段与数据周期，不强要求严格模板。</div></div></div>
+        <div class="step"><div class="n">4</div><div><h4>确认数据周期</h4><p>系统自动从文件内容或文件名识别周期（如 2026-02-01 ~ 2026-02-28），不准确时可手动修改。</p></div></div>
+        <div class="step"><div class="n">5</div><div><h4>提交</h4><p>上传成功 Toast 提示 → 页面自动刷新对应赛道的数据渲染（无需手动刷新浏览器）。</p></div></div>
+      </div>
+    </section>
+
+    <!-- ========== 11. 数据格式 ========== -->
+    <section id="schema">
+      <h2><span class="no">📐</span>数据格式规范</h2>
+      <p class="lead">推荐使用标准 Excel 模板上传，字段命名下面列的约定可以最大化识别成功率。</p>
+
+      <div class="card">
+        <h3><i class="ri-file-excel-2-line"></i>大盘数据 · 推荐字段</h3>
+        <div class="schema">
+<span class="c"># Sheet: 流量占比及效果</span>
+<span class="k">二级流量</span>      <span class="c">// 微信视频号 / 微信朋友圈 / 微信小程序 / 微信公众号 / 平台与内容广告</span>
+<span class="k">消耗占比</span>      <span class="c">// 百分数，如 60.57%</span>
+<span class="k">ECPM</span>          <span class="c">// 数值，单位：元</span>
+<span class="k">CTR</span>           <span class="c">// 百分数，如 1.14%</span>
+<span class="k">综合CVR</span>        <span class="c">// 百分数</span>
+<span class="k">转化成本</span>      <span class="c">// 数值，单位：元</span>
+
+<span class="c"># Sheet: 流量 × 链路 × 落地页</span>
+<span class="k">落地页类型</span>    <span class="c">// 7001官方落地页 / 60011微信客服 / 013企业微信名片 / 0自定义链接</span>
+<span class="k">落地页组件</span>    <span class="c">// 39微信客服咨询 / 1加企微 / ...</span>
+<span class="k">消耗占比 / ECPM / CTR(%) / 综合CVR / 转化成本(元)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i class="ri-information-line"></i>常见规范要点</h3>
+        <ul>
+          <li><b>百分比字段</b>：直接写百分数（1.14% / 60.57%），不要用小数（0.0114）</li>
+          <li><b>货币字段</b>：纯数字，单位统一为"元"，不要混用万元</li>
+          <li><b>CTCVR / 综合 CVR</b>：如数据源是 ‱（万分之一），上传前需折算为 %</li>
+          <li><b>命名建议</b>：<code>丽人_月度_2026-02.xlsx</code>，便于系统自动识别赛道与周期</li>
+          <li><b>图片/PDF</b>：可作为补充素材上传，会出现在"动态数据"区域</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 12. 下载与安全 ========== -->
+    <section id="download">
+      <h2><span class="no">📤</span>下载与信息安全</h2>
+
+      <div class="card">
+        <h3><i class="ri-download-cloud-2-line"></i>三种下载格式</h3>
+        <table class="matrix">
+          <thead><tr><th>格式</th><th>特点</th><th>建议使用场景</th></tr></thead>
+          <tbody>
+            <tr><td><b>Excel</b>（默认）</td><td>保留表头、支持二次处理</td><td>拿回本地再分析、做透视表</td></tr>
+            <tr><td><b>CSV</b></td><td>轻量、跨平台通用</td><td>导入其他 BI 工具或脚本处理</td></tr>
+            <tr><td><b>PDF</b></td><td>快照存档，不可编辑</td><td>归档、对外不可改动的汇报</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3><i class="ri-shield-keyhole-line"></i>下载前的安全确认</h3>
+        <p>每次下载都会弹出信息安全提示，需确认以下事项：</p>
+        <ul>
+          <li>本数据仅供内部业务参考使用，<b>严禁对外传播</b></li>
+          <li>不可将数据上传至外部云盘、公共聊天工具</li>
+          <li>下载记录会被访问统计模块捕获</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========== 13. FAQ ========== -->
+    <section id="faq">
+      <h2><span class="no">❓</span>常见问题</h2>
+
+      <div class="faq">
+        <details>
+          <summary><span class="q">Q</span>为什么我看不到「管理后台」Tab？</summary>
+          <div class="answer">
+            管理后台对「任一模块有编辑权限」或"超级管理员"才可见。如果你是纯浏览用户，不会显示入口。
+            <ul>
+              <li>想要编辑权限：联系你所在赛道的超级管理员，在「管理后台 → 权限管理」分配</li>
+              <li>如果你已经分配了但仍看不到：刷新浏览器，或退出重新登录（权限接口有本地缓存）</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>为什么没有「上传数据」按钮？</summary>
+          <div class="answer">
+            上传按钮依赖「当前赛道」的编辑权限。可能原因：
+            <ul>
+              <li>你没有该赛道的编辑权限（哪怕有其他赛道也不行）</li>
+              <li>赛道被管理员在"赛道展示管理"中设置为只读展示</li>
+              <li>超级管理员可无条件看到</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>权限调整后多久生效？</summary>
+          <div class="answer">
+            管理员保存权限后<b>立即生效</b>，但前端页面有缓存。刷新浏览器（F5 / Cmd+R）即可看到最新权限。强制退出登录再登入最稳妥。
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>支持上传哪些文件格式？</summary>
+          <div class="answer">
+            <ul>
+              <li><b>大盘数据</b>：Excel（xlsx/xls）、CSV、图片（jpg/png/gif/webp）、PDF 等任意数据格式，系统智能识别</li>
+              <li><b>知识库</b>：同上，外加链接导入（iWiki 等内部链接）</li>
+              <li><b>案例库</b>：单条填表新增，或 Excel 批量导入</li>
+              <li><b>Skill / 行业动态</b>：对应类型文件</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>上传后页面为什么没更新？</summary>
+          <div class="answer">
+            上传成功后系统会自动触发对应赛道的数据重新拉取与渲染（<code>loadDashboardData()</code>）。如果超过 5 秒仍无变化：
+            <ul>
+              <li>检查上传成功 Toast 是否出现</li>
+              <li>手动切换到其他赛道再切回来，触发重新加载</li>
+              <li>强制刷新浏览器</li>
+              <li>查看浏览器控制台是否有 API 报错</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>CTCVR / ‱（万分之一）单位怎么上传？</summary>
+          <div class="answer">
+            系统字段统一以 <b>%</b> 存储与展示。若原数据是 ‱，上传前需除以 100 折算为 %。例：原值 25‱ → 上传值 0.25%。
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>本地小助手回答不准怎么办？</summary>
+          <div class="answer">
+            助手基于知识库内容回答。如果回答空泛或不准：
+            <ul>
+              <li>检查知识库里是否上传过对应主题的权威文档</li>
+              <li>在提示词里加"请基于知识库中 XX 文档回答"</li>
+              <li>用"先上传后问"的策略：缺啥补啥</li>
+              <li>关键决策不要只依赖 AI，以原始数据为准</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary><span class="q">Q</span>下载的 Excel 打开是乱码？</summary>
+          <div class="answer">
+            已处理 UTF-8 BOM，Excel 打开应该正常。若仍乱码，尝试用 WPS 或先用 Numbers 打开另存；CSV 如显示乱码，改用 Excel「数据 → 从文本导入」选 UTF-8 编码。
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ========== 14. 更新日志 ========== -->
+    <section id="changelog">
+      <h2><span class="no">📅</span>更新日志</h2>
+      <div class="card">
+        <h3><i class="ri-price-tag-3-line"></i>v1.0 · 2026-04-22（本次首版）</h3>
+        <ul>
+          <li>对照 With 平台「本地行渠联动系统（渠道版）」版本 v171 的源代码与预览界面完整梳理</li>
+          <li>覆盖 6 大模块、8 大行业赛道、10 类知识文档、3 层权限、6 个管理后台子模块</li>
+          <li>独立成章说明 AI 咨询入口「本地小助手」的 4 种调起方式与使用建议</li>
+          <li>截图素材来源于实际预览界面</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div>📘 本地行渠联动作战大本营 · 使用手册 v1.0</div>
+    <div>最后更新：2026-04-22</div>
+  </div>
+</footer>
+
+<!-- 图片灯箱 -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-close" id="lbClose"><i class="ri-close-line"></i></div>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<script>
+  // 侧边导航高亮
+  const links = document.querySelectorAll('nav.side a');
+  const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
+
+  // 平滑滚动
+  links.forEach(a => a.addEventListener('click', e => {
+    const href = a.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }));
+
+  // 角色切换
+  document.querySelectorAll('.role-switch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const role = btn.dataset.role;
+      document.querySelectorAll('.role-switch button').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.role-panel').forEach(p => p.classList.toggle('active', p.dataset.role === role));
+    });
+  });
+
+  // 灯箱
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCap = document.getElementById('lbCap');
+  const lbClose = document.getElementById('lbClose');
+  document.querySelectorAll('figure img').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lbCap.textContent = img.closest('figure')?.querySelector('figcaption')?.textContent.replace(/·.*/,'').trim() || '';
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click', () => lb.classList.remove('open'));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') lb.classList.remove('open');
+  });
+</script>
+
+</body>
+</html>
